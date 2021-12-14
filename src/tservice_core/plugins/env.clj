@@ -88,7 +88,7 @@
                 :cache :cache-rootdir}
         key (cn cn-map)]
     (when key
-      (fs/join-paths (key context-dirs) plugin-name))))
+      (fs/join-paths (key (get-context-dirs)) plugin-name))))
 
 (defn get-workdir
   ([]

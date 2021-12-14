@@ -17,7 +17,7 @@
                  [org.tcrawley/dynapath "1.0.0"]                                    ; Dynamically add Jars (e.g. Oracle or Vertica) to classpath
 
                  [selmer "1.12.27"]
-                 [com.github.yjcyxky/local-fs "0.1.2"]
+                 [com.github.yjcyxky/local-fs "0.1.5"]
                  [com.github.yjcyxky/remote-fs "0.2.1"]
 
                  [io.forward/yaml "1.0.11" :exclusions [org.clojure/clojure]]]
