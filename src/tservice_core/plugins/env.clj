@@ -7,17 +7,29 @@
 (defonce ^:private workdir-root (atom nil))
 (defonce ^:private custom-plugin-dir (atom nil))
 
-(defn setup-plugin-dir
-  "Set a custom plugin directory."
-  [^String dir]
-  (reset! custom-plugin-dir dir))
+(defn get-workdir-root
+  []
+  @workdir-root)
 
 (defn setup-workdir-root
   "Set a root directory for the working directory of a plugin."
   [^String dir]
   (reset! workdir-root dir))
 
-(defonce context-dirs (atom {}))
+(defn get-plugin-dir
+  []
+  @custom-plugin-dir)
+
+(defn setup-plugin-dir
+  "Set a custom plugin directory."
+  [^String dir]
+  (reset! custom-plugin-dir dir))
+
+(defonce ^:private context-dirs (atom {}))
+
+(defn get-context-dirs
+  []
+  @context-dirs)
 
 (defn setup-context-dirs
   [^String plugin-dir]
@@ -40,7 +52,7 @@
          (fs/create-dir-if-not-exists! path)
          (assert (Files/isWritable path)
                  (str "TService does not have permissions to write to plugins directory " filename))
-         (setup-context-dirs (.getPath path))
+         (setup-context-dirs (.toString path))
          path)
         ;; If we couldn't create the directory, or the directory is not writable, fall back to a temporary directory
         ;; rather than failing to launch entirely. Log instructions for what should be done to fix the problem.
@@ -57,7 +69,7 @@
          (let [path (fs/get-path (System/getProperty "java.io.tmpdir"))]
            (assert (Files/isWritable path)
                    "TService cannot write to temporary directory. Please set tservice-plugin-path to a writable directory and restart Tservice.")
-           (setup-context-dirs (.getPath path))
+           (setup-context-dirs (.toString path))
            path))))))
 
 ;; Actual logic is wrapped in a delay rather than a normal function so we don't log the error messages more than once

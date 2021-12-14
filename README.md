@@ -6,7 +6,7 @@
 A Clojure library designed to ... well, that part is up to you.
 
 ```clj
-[org.clojars.yjcyxky/tservice-core "0.0.0"]
+[com.github.yjcyxky/tservice-core "0.1.0"]
 ```
 
 ## Usage
