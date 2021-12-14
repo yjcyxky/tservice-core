@@ -72,7 +72,7 @@
   (doseq [topic topics]
     (subscribe-to-topic! topic channel)))
 
-(defn- start-event-listener!
+(defn start-event-listener!
   "Initialize an event listener which runs on a background thread via `go-loop`."
   [topics channel handler-fn]
   {:pre [(seq topics) (fn? handler-fn)]}
