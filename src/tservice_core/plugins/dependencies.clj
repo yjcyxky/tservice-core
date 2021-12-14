@@ -1,7 +1,7 @@
 (ns tservice-core.plugins.dependencies
   (:require [clojure.tools.logging :as log]
             [tservice-core.plugins.classloader :as classloader]
-            [tservice-core.util :as u]))
+            [tservice-core.plugins.util :as u]))
 
 (def ^:private plugins-with-unsatisfied-deps
   (atom #{}))

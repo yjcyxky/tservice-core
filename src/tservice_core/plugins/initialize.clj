@@ -8,7 +8,7 @@
   (:require [clojure.tools.logging :as log]
             [tservice-core.plugins.dependencies :as deps]
             [tservice-core.plugins.init-steps :as init-steps]
-            [tservice-core.util :as u]
+            [tservice-core.plugins.util :as u]
             [tservice-core.plugins.env :refer [get-context-path]]
             [local-fs.core :as fs]
             [schema.core :as s]))

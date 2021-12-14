@@ -6,7 +6,7 @@
   (:require [clojure.tools.logging :as log]
             [tservice-core.plugins.classloader :as classloader]
             [tservice-core.plugins.plugin-proxy :as plugin-proxy]
-            [tservice-core.util :as u]
+            [tservice-core.plugins.util :as u]
             [local-fs.core :as fs]
             [clojure.string :as clj-str]))
 

@@ -1,14 +1,21 @@
 (ns tservice-core.plugins.env
   (:require [local-fs.core :as fs]
-            [clojure.tools.logging :as log])
+            [clojure.tools.logging :as log]
+            [tservice-core.plugins.util :as u])
   (:import [java.nio.file Files Path]))
 
+(defonce ^:private workdir-root (atom nil))
 (defonce ^:private custom-plugin-dir (atom nil))
 
 (defn setup-plugin-dir
   "Set a custom plugin directory."
   [^String dir]
   (reset! custom-plugin-dir dir))
+
+(defn setup-workdir-root
+  "Set a root directory for the working directory of a plugin."
+  [^String dir]
+  (reset! workdir-root dir))
 
 (defonce context-dirs (atom {}))
 
@@ -70,3 +77,14 @@
         key (cn cn-map)]
     (when key
       (fs/join-paths (key context-dirs) plugin-name))))
+
+(defn get-workdir
+  ([]
+   (fs/join-paths @workdir-root (u/uuid)))
+  ([& {:keys [username uuid]}]
+   (try
+     (let [uuid (or uuid (u/uuid))
+           subpath (if username (fs/join-paths username uuid) uuid)]
+       (fs/join-paths @workdir-root subpath))
+     (catch Exception e
+       (log/error "You need to run setup-workdir-root function firstly.")))))

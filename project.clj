@@ -6,10 +6,13 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/tools.logging "1.1.0"]
                  [org.clojure/tools.namespace "1.0.0"]
+                 [org.clojure/core.async "0.4.500"
+                  :exclusions [org.clojure/tools.reader]]
 
                  [prismatic/schema "1.2.0"]
                  [danlentz/clj-uuid "0.1.9"]
                  [clojure.java-time "0.3.2"]
+                 [camel-snake-kebab "0.4.2"]
                  [colorize "0.1.1" :exclusions [org.clojure/clojure]]               ; string output with ANSI color codes (for logging)
                  [org.tcrawley/dynapath "1.0.0"]                                    ; Dynamically add Jars (e.g. Oracle or Vertica) to classpath
 

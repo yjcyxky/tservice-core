@@ -1,7 +1,7 @@
 (ns tservice-core.plugins.plugin-proxy
   "Plugin proxy used for plugins added at runtime. Load metadata from each plugin and register into the private variable."
   (:require [clojure.tools.logging :as log]
-            [tservice-core.util :as u]))
+            [tservice-core.plugins.util :as u]))
 
 (defonce ^:private plugin-contexts
   (atom nil))
