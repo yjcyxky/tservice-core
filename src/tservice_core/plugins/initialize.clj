@@ -25,7 +25,13 @@
           plugin-name (:name (:plugin manifest))
           env-dest-dir (fs/join-paths (fs/parent-path jar-path) "envs")
           config-dir (get-context-path :config plugin-name)
-          data-dir (get-context-path :data plugin-name)]
+          data-dir (get-context-path :data plugin-name)
+          context {:jar-path jar-path
+                   :plugin-name plugin-name
+                   :env-dest-dir env-dest-dir
+                   :config-dir config-dir
+                   :data-dir data-dir
+                   :plugin-info (:info manifest)}]
       ;; if *any* of the plugins is not lazy-load, initialize it now
       (when (some false? (map :lazy-load plugins))
         (when add-to-classpath!
@@ -33,11 +39,7 @@
         (doseq [dir [env-dest-dir config-dir data-dir]]
           (when (not (fs/exists? dir))
             (fs/create-directories! dir)))
-        (init-steps/do-init-steps! init-steps {:jar-path jar-path
-                                               :env-dest-dir env-dest-dir
-                                               :config-dir config-dir
-                                               :data-dir data-dir
-                                               :plugin-info (:info manifest)})))
+        (init-steps/do-init-steps! init-steps context)))
     ;; record this plugin as initialized and find any plugins ready to be initialized because depended on this one !
     ;;
     ;; Fun fact: we already have the `plugin-initialization-lock` if we're here so we don't need to worry about

@@ -6,6 +6,7 @@
 
 (defonce ^:private workdir-root (atom nil))
 (defonce ^:private custom-plugin-dir (atom nil))
+(defonce ^:private config (atom {}))
 
 (defn get-workdir-root
   []
@@ -24,6 +25,15 @@
   "Set a custom plugin directory."
   [^String dir]
   (reset! custom-plugin-dir dir))
+
+(defn get-plugin-config
+  [plugin-name]
+  ((keyword plugin-name) @config))
+
+(defn setup-config
+  "Pass the instance's config to plugin system."
+  [c]
+  (reset! config c))
 
 (defonce ^:private context-dirs (atom {}))
 

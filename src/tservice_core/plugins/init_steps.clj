@@ -6,6 +6,7 @@
   (:require [clojure.tools.logging :as log]
             [tservice-core.plugins.classloader :as classloader]
             [tservice-core.plugins.plugin-proxy :as plugin-proxy]
+            [tservice-core.plugins.env :refer [get-plugin-config]]
             [tservice-core.plugins.util :as u]
             [local-fs.core :as fs]
             [clojure.string :as clj-str]))
@@ -57,9 +58,13 @@
 (defmethod do-init-step! :init-event [{entrypoint :entrypoint}]
   (plugin-proxy/init-event! entrypoint))
 
+(defmethod do-init-step! :init-plugin [{entrypoint :entrypoint context :context}]
+  (plugin-proxy/init-plugin! entrypoint :config (get-plugin-config (:plugin-name context))))
+
 (defn do-init-steps!
   "Perform the initialization steps for a TService plugin as specified under `init:` in its plugin
    manifest (`tservice-plugin.yaml`) by calling `do-init-step!` for each step."
   [init-steps context]
   (doseq [step init-steps]
+    ;; step --> step dict in yaml
     (do-init-step! (assoc step :context context))))

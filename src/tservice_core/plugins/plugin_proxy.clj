@@ -40,6 +40,12 @@
     (log/info "Starting events listener:" (u/format-color 'blue entrypoint) "👂")
     (init-fn)))
 
+(defn init-plugin!
+  [^String entrypoint & {:keys [config] :or {config {}}}]
+  (when-let [init-fn (find-var (symbol entrypoint))]
+    (log/info (format "Initialize plugin with init-fn (%s) and config (%s)" entrypoint config))
+    (init-fn config)))
+
 (defn load-and-register-plugin-metadata!
   [^String entrypoint plugin-info]
   (let [m (load-plugin-metadata entrypoint)
