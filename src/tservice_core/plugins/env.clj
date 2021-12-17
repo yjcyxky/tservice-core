@@ -57,7 +57,7 @@
   (delay
    (let [filename @custom-plugin-dir]
      (try
-        ;; attempt to create <current-dir>/plugin-jars if it doesn't already exist. Check that the directory is readable.
+        ;; attempt to create <current-dir>/plugins if it doesn't already exist. Check that the directory is readable.
        (let [path (fs/get-path filename)]
          (fs/create-dir-if-not-exists! path)
          (assert (Files/isWritable path)

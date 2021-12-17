@@ -1,14 +1,16 @@
 (ns tservice-core.plugins.core
   "Provide a robust plugin system for integrating new functions into the tservice."
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]
+            [tservice-core.plugins.semver :as semver]
             [clojure.tools.logging :as log]
             [local-fs.core :as fs]
+            [clojure.string :as clj-str]
             [tservice-core.plugins.env :refer [get-context-path plugins-dir]]
             [tservice-core.plugins.classloader :as classloader]
             [tservice-core.plugins.initialize :as initialize]
             [tservice-core.plugins.plugin-proxy :refer [add-plugin-context]]
-            [yaml.core :as yaml])
+            [yaml.core :as yaml]
+            [tservice-core.plugins.util :as u])
   (:import [java.nio.file Path]))
 
 (defn- extract-system-modules! []
@@ -57,11 +59,15 @@
 ;;; +----------------------------------------------------------------------------------------------------------------+
 (defn- plugins-paths []
   (for [^Path path (fs/files-seq (plugins-dir))
-        :let [file-name (.getFileName path)]
+        :let [file-name (.toString (.getFileName path))
+              version (-> (clj-str/replace file-name #".jar$" "")
+                          (clj-str/split #"-")
+                          (last))]
         :when      (and (fs/regular-file? path)
                         (fs/readable? path)
-                        (or (str/ends-with? file-name "tservice-plugin.jar")
-                            (str/ends-with? file-name "common-plugin.jar")))]
+                        ;; TODO: Need to be strictly restricted?
+                        (clj-str/ends-with? file-name ".jar")
+                        (semver/valid? version))]
     path))
 
 (defn- load-local-plugin-manifest! [^Path path]
@@ -97,8 +103,11 @@
 
 (defn- load! []
   (log/info (format "Loading plugins in %s..." (str (plugins-dir))))
+  (log/info (u/format-color 'yellow "NOTICE: plugin name need to be end with .jar and contains a valid semantic version number (such as test-0.1.0.jar)."))
   (let [paths (plugins-paths)]
-    (init-plugins! paths)))
+    (if (seq paths)
+      (init-plugins! paths)
+      (log/info (u/format-color 'yellow "No any valid plugins.")))))
 
 (defonce ^:private load!* (delay (load!)))
 
