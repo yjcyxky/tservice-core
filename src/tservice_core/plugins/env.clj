@@ -4,6 +4,8 @@
             [tservice-core.plugins.util :as u])
   (:import [java.nio.file Files Path]))
 
+(defonce ^:private fn-create-task (atom nil))
+(defonce ^:private fn-update-task (atom nil))
 (defonce ^:private workdir-root (atom nil))
 (defonce ^:private custom-plugin-dir (atom nil))
 (defonce ^:private config (atom {}))
@@ -34,6 +36,25 @@
   "Pass the instance's config to plugin system."
   [c]
   (reset! config c))
+
+(defn setup-fns
+  [fn-create fn-update]
+  (reset! fn-create-task fn-create)
+  (reset! fn-update-task fn-update))
+
+(defn create-task!
+  {:added "0.2.0"}
+  [payload]
+  (if @fn-create-task
+    (@fn-create-task payload)
+    (log/warn "No function for creating task.")))
+
+(defn update-task!
+  {:added "0.2.0"}
+  [payload]
+  (if @fn-update-task
+    (@fn-update-task payload)
+    (log/warn "No function for updating task.")))
 
 (defonce ^:private context-dirs (atom {}))
 
@@ -110,3 +131,11 @@
        (fs/join-paths @workdir-root subpath))
      (catch Exception e
        (log/error "You need to run setup-workdir-root function firstly.")))))
+
+(defn add-env-to-path
+  "Add the env directory of a plugin into PATH variable."
+  {:added "0.2.0"}
+  [plugin-name]
+  (let [env-bin-path (fs/join-paths (get-context-path :env plugin-name) "bin")
+        path (u/get-path-variable)]
+    (str env-bin-path ":" path)))

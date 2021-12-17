@@ -17,32 +17,29 @@
   {:arglists '([m])}
   (comp keyword :step))
 
-(defmethod do-init-step! :unpack-env [{envname :envname envtype :envtype fileext :fileext postunpack :postunpack context :context}]
-  (let [{:keys [jar-path env-dest-dir config-dir data-dir]} context
-        ;; Compatible with v0.5.8 older interface (Only require envname, not fileext.)
-        envname-ext (clj-str/split envname #"\.")
-        fileext (or fileext (clj-str/join "." (rest envname-ext)))  ;; such as "tar.gz", "tgz" or ""
-        envname (first envname-ext)
+(defmethod do-init-step! :unpack-env [{envname :envname envtype :envtype postunpack :postunpack context :context}]
+  (let [{:keys [jar-path plugin-name env-dest-dir env-dir config-dir data-dir]} context
         post-unpack-cmd (when postunpack
                           (u/render-template postunpack
-                                             {:ENV_DEST_DIR env-dest-dir
+                                             {:JAR_PATH jar-path
+                                              :PLUGIN_NAME plugin-name
+                                              :ENV_DEST_DIR env-dest-dir
+                                              :ENV_DIR env-dir
                                               :CONFIG_DIR config-dir
                                               :DATA_DIR data-dir
-                                              :ENV_NAME envname}))
-        component (if (empty? fileext) envname (format "%s.%s" envname fileext))]
-    (log/info (u/format-color 'blue (format "Unpack the conda environment into %s/%s..."
-                                            env-dest-dir envname)))
+                                              :ENV_NAME envname}))]
+    (log/info (u/format-color 'blue (format "Unpack the environment into %s..." env-dir)))
     (when jar-path
-      ;; Archive file or directory
+      ;; file (Archive or common file) or directory
       (cond
         (= envtype "environment")
-        (fs/extract-env-from-archive jar-path component env-dest-dir)
+        (fs/extract-env-from-archive jar-path envname env-dir)
 
         (= envtype "configuration")
-        (fs/extract-env-from-archive jar-path component config-dir)
+        (fs/extract-env-from-archive jar-path envname config-dir)
 
         (= envtype "data")
-        (fs/extract-env-from-archive jar-path component data-dir))
+        (fs/extract-env-from-archive jar-path envname data-dir))
 
       (when post-unpack-cmd
         (log/info (u/format-color 'blue (format "Run post-unpack-cmd: %s" post-unpack-cmd)))

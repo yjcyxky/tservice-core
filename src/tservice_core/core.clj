@@ -1,6 +1,6 @@
 (ns tservice-core.core
   "Provide a robust plugin system for integrating new functions into the tservice."
-  (:require [tservice-core.plugins.env :refer [setup-plugin-dir setup-workdir-root setup-config]]
+  (:require [tservice-core.plugins.env :refer [setup-plugin-dir setup-workdir-root setup-config setup-fns]]
             [tservice-core.plugins.core :refer [load-plugins!]]
             [tservice-core.tasks.async :as async-task]))
 
@@ -9,6 +9,8 @@
 (def setup-custom-workdir-root setup-workdir-root)
 
 (def setup-plugin-configs setup-config)
+
+(def setup-custom-fns setup-fns)
 
 (defn start-plugins!
   "An entrypoint. You can load all plugins by using this function."

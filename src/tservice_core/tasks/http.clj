@@ -152,7 +152,6 @@
                  :handler (fn [context] context)}
                 {:method-type :post
                  :endpoint \"report\"
-                 :enable-schema? true
                  :summary \"\"
                  :body-schema {}
                  :response-schema {}

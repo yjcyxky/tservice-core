@@ -142,21 +142,28 @@
    Arguments:
      env-context: {:ENV_DEST_DIR \" \"
                    :ENV_NAME \"pgi\"
-                   :CLONE_ENV_BIN \"\"}
-   "
+                   :CLONE_ENV_BIN \"\"}"
   [template env-context]
   (log/debug (format "Render Template with Environment Context: %s" env-context))
-  (let [{:keys [ENV_DEST_DIR ENV_NAME CONFIG_DIR DATA_DIR]} env-context
-        env-dest-dir (fs/join-paths ENV_DEST_DIR ENV_NAME)
-        env-name ENV_NAME
-        clone-env-bin (fs/which "clone-env")]
-    (parser/render template {:ENV_DEST_DIR env-dest-dir
-                             :CONFIG_DIR CONFIG_DIR
-                             :DATA_DIR DATA_DIR
-                             :ENV_NAME env-name
-                             :CLONE_ENV_BIN clone-env-bin})))
+  (let [clone-env-bin (fs/which "clone-env")]
+    (parser/render template (merge env-context {:CLONE_ENV_BIN clone-env-bin}))))
 
 (defn make-plugin-subpath
   "Return a new directory based on plugin-name and custom subdir."
   ^String [^String plugin-dir ^String dir-name ^String plugin-name]
   (fs/join-paths plugin-dir dir-name plugin-name))
+
+(defn chain-fn-coll
+  "Run the set of functions sequentially, exit the run 
+   when pred is false and return the existing result."
+  {:added "0.2.0"}
+  [fn-coll pred]
+  (loop [fn-seq (seq fn-coll)
+         results []]
+    (if fn-seq
+      (let [fn-item (first fn-seq)
+            result (fn-item)]
+        (if-not (pred result)
+          (conj results result)
+          (recur (next fn-seq) (conj results result))))
+      results)))

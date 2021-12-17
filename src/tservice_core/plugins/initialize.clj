@@ -26,9 +26,11 @@
           env-dest-dir (fs/join-paths (fs/parent-path jar-path) "envs")
           config-dir (get-context-path :config plugin-name)
           data-dir (get-context-path :data plugin-name)
+          env-dir (get-context-path :env plugin-name)
           context {:jar-path jar-path
                    :plugin-name plugin-name
                    :env-dest-dir env-dest-dir
+                   :env-dir env-dir
                    :config-dir config-dir
                    :data-dir data-dir
                    :plugin-info (:info manifest)}]
