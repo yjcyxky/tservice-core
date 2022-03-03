@@ -6,7 +6,7 @@
 A plugin system for managing several types of plugins, such as deploying http/async/dag task.
 
 ```clj
-[com.github.yjcyxky/tservice-core "0.2.0"]
+[com.github.yjcyxky/tservice-core "0.2.2"]
 ```
 
 ## Convention is Better than Configuration

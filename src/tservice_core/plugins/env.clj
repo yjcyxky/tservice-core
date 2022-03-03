@@ -39,10 +39,10 @@
   (reset! config c))
 
 (defn setup-fns
-  [fn-create fn-update fn-make-remote-link]
-  (reset! fn-create-task fn-create)
-  (reset! fn-update-task fn-update)
-  (reset! fn-make-remote-link fn-make-remote-link))
+  [create-task-fn update-task-fn make-remote-link-fn]
+  (reset! fn-create-task create-task-fn)
+  (reset! fn-update-task update-task-fn)
+  (reset! fn-make-remote-link make-remote-link-fn))
 
 (defn create-task!
   {:added "0.2.0"}
