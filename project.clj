@@ -1,4 +1,4 @@
-(defproject com.github.yjcyxky/tservice-core "0.2.0"
+(defproject com.github.yjcyxky/tservice-core "0.2.1"
   :description "A plugin system for managing several types of plugins, such as deploying http/async/dag task."
   :url "https://github.com/yjcyxky/tservice-core"
   :license {:name "Eclipse Public License"

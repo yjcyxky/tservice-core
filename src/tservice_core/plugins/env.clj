@@ -6,6 +6,7 @@
 
 (defonce ^:private fn-create-task (atom nil))
 (defonce ^:private fn-update-task (atom nil))
+(defonce ^:private fn-make-remote-link (atom nil))
 (defonce ^:private workdir-root (atom nil))
 (defonce ^:private custom-plugin-dir (atom nil))
 (defonce ^:private config (atom {}))
@@ -38,9 +39,10 @@
   (reset! config c))
 
 (defn setup-fns
-  [fn-create fn-update]
+  [fn-create fn-update fn-make-remote-link]
   (reset! fn-create-task fn-create)
-  (reset! fn-update-task fn-update))
+  (reset! fn-update-task fn-update)
+  (reset! fn-make-remote-link fn-make-remote-link))
 
 (defn create-task!
   {:added "0.2.0"}
@@ -55,6 +57,22 @@
   (if @fn-update-task
     (@fn-update-task payload)
     (log/warn "No function for updating task.")))
+
+(defn make-remote-link
+  "Make a remote link for a local file when you need to make the local file be accessed by network,
+   such as minio/s3/oss link. 
+   
+   CAUTION: The path will be returned directly When a make-remote-link function wasn't find.
+   
+   - Why you need to set fn-make-remote-link by setup-fns?
+   We don't know how to create a remote link in the specified environment but you know."
+  {:added "0.2.1"}
+  [abspath]
+  (if @fn-make-remote-link
+    (@fn-make-remote-link abspath)
+    (do
+      (log/warn "No function for making a remote link.")
+      abspath)))
 
 (defonce ^:private context-dirs (atom {}))
 
